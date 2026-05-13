@@ -44,21 +44,13 @@ One line to install and configure:
 curl -sfL https://raw.githubusercontent.com/Shiyao-Huang/claude-for-codex/main/install.sh | bash
 ```
 
-Then set your API key:
+Restart Codex and the tools are ready. Authentication is handled automatically — Codex passes its existing `ANTHROPIC_AUTH_TOKEN` to the MCP server.
+
+To uninstall:
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+curl -sfL https://raw.githubusercontent.com/Shiyao-Huang/claude-for-codex/main/install.sh | bash -s -- --uninstall
 ```
-
-Or for custom endpoints (e.g., Zhipu proxy):
-
-```bash
-export ANTHROPIC_AUTH_TOKEN="your-token"
-export ANTHROPIC_BASE_URL="https://open.bigmodel.cn/api/anthropic"
-export ANTHROPIC_MODEL="glm-5.1"
-```
-
-Restart Codex and the tools are ready.
 
 ## Prerequisites
 
