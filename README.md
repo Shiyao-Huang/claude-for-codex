@@ -36,6 +36,30 @@ claude-for-codex/
 └── README.md
 ```
 
+## Quick Install
+
+One line to install and configure:
+
+```bash
+curl -sfL https://raw.githubusercontent.com/Shiyao-Huang/claude-for-codex/main/install.sh | bash
+```
+
+Then set your API key:
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+Or for custom endpoints (e.g., Zhipu proxy):
+
+```bash
+export ANTHROPIC_AUTH_TOKEN="your-token"
+export ANTHROPIC_BASE_URL="https://open.bigmodel.cn/api/anthropic"
+export ANTHROPIC_MODEL="glm-5.1"
+```
+
+Restart Codex and the tools are ready.
+
 ## Prerequisites
 
 - Node.js 18+
