@@ -8,20 +8,6 @@ export const TOOLS = {
 
 export type ToolName = (typeof TOOLS)[keyof typeof TOOLS];
 
-// Default model
-export const DEFAULT_MODEL = 'claude-sonnet-4-6' as const;
-export const MODEL_ENV_VAR = 'ANTHROPIC_MODEL' as const;
-export const API_KEY_ENV_VAR = 'ANTHROPIC_API_KEY' as const;
-export const AUTH_TOKEN_ENV_VAR = 'ANTHROPIC_AUTH_TOKEN' as const;
-export const BASE_URL_ENV_VAR = 'ANTHROPIC_BASE_URL' as const;
-
-// Available models
-export const AVAILABLE_MODELS = [
-  'claude-sonnet-4-6',
-  'claude-opus-4-6',
-  'claude-haiku-4-5-20251001',
-] as const;
-
 // Tool annotations for MCP spec
 export interface ToolAnnotations {
   title?: string;
@@ -74,7 +60,7 @@ export const ReviewToolSchema = z.object({
 });
 
 export const ChatToolSchema = z.object({
-  message: z.string().describe('The message or question for Claude'),
+  message: z.string().describe('The message or question for Claude Code'),
   systemPrompt: z
     .string()
     .optional()

@@ -7,7 +7,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { ZodError } from 'zod';
-import { TOOLS, type ToolName, API_KEY_ENV_VAR, AUTH_TOKEN_ENV_VAR } from './types.js';
+import { TOOLS, type ToolName } from './types.js';
 import { toolDefinitions } from './tools/definitions.js';
 import { toolHandlers } from './tools/handlers.js';
 
@@ -21,13 +21,6 @@ function isValidToolName(name: string): name is ToolName {
 }
 
 async function main(): Promise<void> {
-  const apiKey = process.env[API_KEY_ENV_VAR] || process.env[AUTH_TOKEN_ENV_VAR];
-  if (!apiKey) {
-    console.error(
-      `Warning: ${API_KEY_ENV_VAR} not set. API calls will fail until it is configured.`
-    );
-  }
-
   const server = new Server(
     { name: SERVER_CONFIG.name, version: SERVER_CONFIG.version },
     { capabilities: { tools: {} } }
@@ -67,10 +60,10 @@ async function main(): Promise<void> {
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error(`${SERVER_CONFIG.name} v${SERVER_CONFIG.version} started`);
+  process.stderr.write(`${SERVER_CONFIG.name} v${SERVER_CONFIG.version} started\n`);
 }
 
 main().catch((error) => {
-  console.error('Fatal:', error);
+  process.stderr.write(`Fatal: ${error}\n`);
   process.exit(1);
 });

@@ -7,15 +7,16 @@ import {
   type ReviewToolArgs,
   type ChatToolArgs,
 } from '../types.js';
-import { callClaude, resolveModel } from '../utils/api.js';
+import { callClaudeCli } from '../utils/api.js';
 
-function buildReviewSystemPrompt(args: ReviewToolArgs): string {
-  const parts = [
-    'You are Claude Code, an expert code reviewer. Provide a thorough, actionable code review.',
-  ];
+function buildReviewPrompt(args: ReviewToolArgs): string {
+  const parts: string[] = [];
+
+  parts.push('Review the following code and provide a structured review.');
+  parts.push('');
 
   if (args.language) {
-    parts.push(`The code is written in ${args.language}.`);
+    parts.push(`Language: ${args.language}`);
   }
   if (args.filename) {
     parts.push(`File: ${args.filename}`);
@@ -24,42 +25,28 @@ function buildReviewSystemPrompt(args: ReviewToolArgs): string {
     parts.push(`Focus areas: ${args.focus}`);
   }
 
-  parts.push(
-    '',
-    'Structure your review as:',
-    '1. **Summary** — Brief overview of what the code does',
-    '2. **Issues** — List problems found (bugs, security, performance)',
-    '3. **Suggestions** — Improvement recommendations',
-    '4. **Verdict** — Overall assessment (approve / request changes / needs discussion)',
-    '',
-    'Be concise. Use bullet points. Prioritize real issues over style preferences.'
-  );
-
-  return parts.join('\n');
-}
-
-function buildReviewUserMessage(args: ReviewToolArgs): string {
-  const parts: string[] = [];
+  parts.push('');
+  parts.push('Structure your review as:');
+  parts.push('1. **Summary** — Brief overview of what the code does');
+  parts.push('2. **Issues** — Problems found (bugs, security, performance), ordered by severity');
+  parts.push('3. **Suggestions** — Improvement recommendations');
+  parts.push('4. **Verdict** — Overall assessment (approve / request changes / needs discussion)');
+  parts.push('');
+  parts.push('Be concise. Use bullet points. Prioritize real issues over style preferences.');
+  parts.push('');
 
   if (args.diff) {
-    parts.push('## Diff to review:\n```diff');
+    parts.push('## Diff to review:');
+    parts.push('```diff');
     parts.push(args.diff);
     parts.push('```');
   }
 
   if (args.code) {
     parts.push('## Full code:');
-    if (args.language) {
-      parts.push('```' + args.language);
-    } else {
-      parts.push('```');
-    }
+    parts.push('```' + (args.language || ''));
     parts.push(args.code);
     parts.push('```');
-  }
-
-  if (!args.code && !args.diff) {
-    parts.push('No code or diff provided. Please provide code or diff for review.');
   }
 
   return parts.join('\n');
@@ -67,7 +54,6 @@ function buildReviewUserMessage(args: ReviewToolArgs): string {
 
 async function handleReview(args: unknown): Promise<ToolResult> {
   const parsed: ReviewToolArgs = ReviewToolSchema.parse(args);
-  const model = resolveModel(parsed.model);
 
   if (!parsed.code && !parsed.diff) {
     return {
@@ -81,15 +67,9 @@ async function handleReview(args: unknown): Promise<ToolResult> {
     };
   }
 
-  const review = await callClaude({
-    model,
-    system: buildReviewSystemPrompt(parsed),
-    messages: [
-      {
-        role: 'user',
-        content: buildReviewUserMessage(parsed),
-      },
-    ],
+  const prompt = buildReviewPrompt(parsed);
+  const review = await callClaudeCli(prompt, {
+    model: parsed.model,
   });
 
   return {
@@ -99,17 +79,10 @@ async function handleReview(args: unknown): Promise<ToolResult> {
 
 async function handleChat(args: unknown): Promise<ToolResult> {
   const parsed: ChatToolArgs = ChatToolSchema.parse(args);
-  const model = resolveModel(parsed.model);
 
-  const response = await callClaude({
-    model,
+  const response = await callClaudeCli(parsed.message, {
     system: parsed.systemPrompt,
-    messages: [
-      {
-        role: 'user',
-        content: parsed.message,
-      },
-    ],
+    model: parsed.model,
   });
 
   return {

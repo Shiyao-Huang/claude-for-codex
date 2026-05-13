@@ -1,7 +1,4 @@
-import { TOOLS, AVAILABLE_MODELS, DEFAULT_MODEL, type ToolDefinition } from '../types.js';
-
-const modelList = AVAILABLE_MODELS.join(', ');
-const modelDescription = `Claude Code model to use (default: ${DEFAULT_MODEL}). Options: ${modelList}`;
+import { TOOLS, type ToolDefinition } from '../types.js';
 
 export const toolDefinitions: ToolDefinition[] = [
   {
@@ -35,7 +32,7 @@ export const toolDefinitions: ToolDefinition[] = [
         },
         model: {
           type: 'string',
-          description: modelDescription,
+          description: 'Claude Code model to use (optional, uses default)',
         },
       },
       required: [],
@@ -66,7 +63,7 @@ export const toolDefinitions: ToolDefinition[] = [
         },
         model: {
           type: 'string',
-          description: modelDescription,
+          description: 'Claude Code model to use (optional, uses default)',
         },
       },
       required: ['message'],
