@@ -171,8 +171,7 @@ for skill_dir in skills/*/; do
   echo "  - $skill_name"
 done
 echo ""
-echo "Authentication: Codex will pass its existing ANTHROPIC_AUTH_TOKEN"
-echo "to the MCP server automatically. No manual configuration needed."
+echo "No API key needed — if Claude Code is installed and logged in, it just works."
 echo ""
 echo "To uninstall:"
 echo "  curl -sfL https://raw.githubusercontent.com/Shiyao-Huang/claude-for-codex/main/install.sh | bash -s -- --uninstall"

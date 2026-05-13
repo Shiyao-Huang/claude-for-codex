@@ -4,8 +4,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     name: TOOLS.CLAUDE_REVIEW,
     description:
-      'Call Claude Code to perform a code review. Provide code, a diff, or both. ' +
-      'Returns structured review feedback with issues and suggestions.',
+      'Smart all-in-one code review via Claude Code. Automatically detects and reviews ' +
+      'security, performance, correctness, architecture, and test coverage issues. ' +
+      'Provide code, a diff, or both.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -25,11 +26,6 @@ export const toolDefinitions: ToolDefinition[] = [
           type: 'string',
           description: 'Programming language for better review context',
         },
-        focus: {
-          type: 'string',
-          description:
-            'Specific review focus areas (e.g., "security, performance, readability")',
-        },
         model: {
           type: 'string',
           description: 'Claude Code model to use (optional, uses default)',
@@ -38,7 +34,7 @@ export const toolDefinitions: ToolDefinition[] = [
       required: [],
     },
     annotations: {
-      title: 'Claude Code Review',
+      title: 'Claude Code Smart Review',
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: false,

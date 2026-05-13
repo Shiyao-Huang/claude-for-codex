@@ -44,28 +44,15 @@ export interface ToolResult {
 export const ReviewToolSchema = z.object({
   code: z.string().optional().describe('Source code to review'),
   diff: z.string().optional().describe('Diff or patch content to review'),
-  filename: z
-    .string()
-    .optional()
-    .describe('Filename for context (e.g., "src/auth.ts")'),
-  language: z
-    .string()
-    .optional()
-    .describe('Programming language for better review context'),
-  focus: z
-    .string()
-    .optional()
-    .describe('Specific review focus areas (e.g., "security, performance")'),
-  model: z.string().optional().describe('Claude model to use'),
+  filename: z.string().optional().describe('Filename for context'),
+  language: z.string().optional().describe('Programming language'),
+  model: z.string().optional().describe('Claude Code model to use'),
 });
 
 export const ChatToolSchema = z.object({
   message: z.string().describe('The message or question for Claude Code'),
-  systemPrompt: z
-    .string()
-    .optional()
-    .describe('Optional system prompt to set context'),
-  model: z.string().optional().describe('Claude model to use'),
+  systemPrompt: z.string().optional().describe('Optional system prompt'),
+  model: z.string().optional().describe('Claude Code model to use'),
 });
 
 export type ReviewToolArgs = z.infer<typeof ReviewToolSchema>;

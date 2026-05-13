@@ -1,56 +1,60 @@
 ---
 name: claude-code-review
-description: Invoke Claude Code for expert code review. Use when Codex needs a second opinion on code quality, security, or architecture.
+description: Smart all-in-one code review via Claude Code. Automatically detects and reviews security, performance, correctness, architecture, and test coverage issues based on code content.
 user-invocable: true
 ---
 
-# Claude Code Review
+# Claude Code Smart Review
 
-Use this skill when you need Claude Code to review code that Codex has written or is analyzing.
+All-in-one intelligent code review. Claude Code automatically analyzes the code and determines which review dimensions are relevant — no need to specify focus areas.
 
 ## When to use
-- After Codex generates or modifies code, run claude-code-review for a second opinion
-- When you need security, performance, or architecture review
-- Before committing large changes
+- After writing or modifying code — get a second opinion
+- Before committing — catch issues early
+- Reviewing PRs or diffs — structured feedback
+- Any code quality check
 
 ## How to invoke
 
-Call the `claude-code-review` MCP tool with the code or diff to review.
-
-### Review generated code
 ```
 claude-code-review({
-  code: "<the source code>",
+  code: "<source code>",
   filename: "src/auth.ts",
-  language: "typescript",
-  focus: "security, correctness"
+  language: "typescript"
 })
 ```
 
-### Review a diff
+Or with a diff:
 ```
 claude-code-review({
-  diff: "<unified diff output>",
-  filename: "src/api.ts",
-  focus: "breaking changes, test coverage"
+  diff: "<unified diff>",
+  filename: "src/api.ts"
 })
 ```
 
-### Focus areas
-- `security` — Vulnerabilities, injection risks, auth issues
-- `performance` — Bottlenecks, memory leaks, N+1 queries
-- `correctness` — Logic errors, edge cases, null handling
-- `readability` — Naming, structure, documentation
-- `architecture` — Coupling, cohesion, design patterns
+No `focus` parameter needed — Claude automatically detects relevant review dimensions.
+
+## Auto-detected review dimensions
+Claude Code analyzes the code and automatically applies relevant checks:
+
+- **Security** — SQL injection, XSS, auth bypass, hardcoded secrets, data exposure
+- **Performance** — Memory leaks, N+1 queries, unnecessary re-renders, algorithmic complexity
+- **Correctness** — Logic errors, race conditions, null handling, edge cases, off-by-one
+- **Architecture** — Coupling, cohesion, SOLID violations, design pattern misuse
+- **Error handling** — Missing error cases, silent failures, recovery paths
+- **Test coverage** — Untested paths, weak assertions, missing edge case tests
+- **Dependencies** — Outdated/vulnerable packages, unnecessary imports
+- **Readability** — Naming, structure, documentation gaps
+
+Not all dimensions apply to every review — Claude focuses on what's relevant.
 
 ## Output structure
-Claude Code returns:
-1. **Summary** — What the code does
-2. **Issues** — Problems found (bugs, security, performance)
+1. **Summary** — What the code does and which dimensions were reviewed
+2. **Issues** — Problems found, ordered by severity (critical → low)
 3. **Suggestions** — Improvement recommendations
 4. **Verdict** — approve / request changes / needs discussion
 
 ## Rules
-- Do not auto-fix review findings. Present them to the user and ask which to address.
-- If the review tool returns an error, report it and stop. Do not improvise a review yourself.
-- Always include `filename` and `language` when available for better context.
+- Do not auto-fix findings. Present them and ask which to address.
+- If the tool returns an error, report it and stop.
+- Always include `filename` and `language` when available.

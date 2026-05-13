@@ -9,10 +9,31 @@ import {
 } from '../types.js';
 import { callClaudeCli } from '../utils/api.js';
 
+const SMART_REVIEW_PROMPT = `You are an expert code reviewer. Analyze the provided code and automatically detect which review dimensions are relevant:
+
+- **Security**: SQL injection, XSS, auth bypass, hardcoded secrets, data exposure
+- **Performance**: Memory leaks, N+1 queries, unnecessary re-renders, algorithmic complexity
+- **Correctness**: Logic errors, race conditions, null handling, edge cases
+- **Architecture**: Coupling, cohesion, SOLID violations, design pattern misuse
+- **Error handling**: Missing error cases, silent failures, recovery paths
+- **Dependencies**: Outdated/vulnerable packages, unnecessary imports
+- **Test coverage**: Untested paths, weak assertions, missing edge cases
+- **Readability**: Naming, structure, documentation gaps
+
+Not all dimensions apply to every review — focus on what's relevant for THIS code.
+
+Structure your review as:
+1. **Summary** — What the code does and which dimensions were reviewed
+2. **Issues** — Problems found, ordered by severity (critical → high → medium → low)
+3. **Suggestions** — Improvement recommendations
+4. **Verdict** — approve / request changes / needs discussion
+
+Be concise. Use bullet points. Prioritize real issues over style preferences.`;
+
 function buildReviewPrompt(args: ReviewToolArgs): string {
   const parts: string[] = [];
 
-  parts.push('Review the following code and provide a structured review.');
+  parts.push('Review the following code. Automatically detect relevant review dimensions (security, performance, correctness, architecture, error handling, test coverage, dependencies, readability).');
   parts.push('');
 
   if (args.language) {
@@ -21,18 +42,7 @@ function buildReviewPrompt(args: ReviewToolArgs): string {
   if (args.filename) {
     parts.push(`File: ${args.filename}`);
   }
-  if (args.focus) {
-    parts.push(`Focus areas: ${args.focus}`);
-  }
 
-  parts.push('');
-  parts.push('Structure your review as:');
-  parts.push('1. **Summary** — Brief overview of what the code does');
-  parts.push('2. **Issues** — Problems found (bugs, security, performance), ordered by severity');
-  parts.push('3. **Suggestions** — Improvement recommendations');
-  parts.push('4. **Verdict** — Overall assessment (approve / request changes / needs discussion)');
-  parts.push('');
-  parts.push('Be concise. Use bullet points. Prioritize real issues over style preferences.');
   parts.push('');
 
   if (args.diff) {
@@ -69,6 +79,7 @@ async function handleReview(args: unknown): Promise<ToolResult> {
 
   const prompt = buildReviewPrompt(parsed);
   const review = await callClaudeCli(prompt, {
+    system: SMART_REVIEW_PROMPT,
     model: parsed.model,
   });
 
