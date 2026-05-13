@@ -1,0 +1,36 @@
+{
+  "name": "claude-code-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server that lets Codex call Claude Code for code review and chat",
+  "main": "dist/index.js",
+  "bin": {
+    "claude-code-mcp-server": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "anthropic",
+    "codex",
+    "code-review"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}
