@@ -9,6 +9,33 @@ Built on the same architecture as [codex-mcp-server](https://github.com/tuannvm/
 - **claude-code-review** — Send code or a diff to Claude Code and get structured review feedback (bugs, security issues, suggestions, verdict)
 - **claude-code-chat** — Ask Claude Code general questions from within Codex
 
+## Project Structure
+
+```
+claude-for-codex/
+├── src/                        # MCP server source (TypeScript ESM)
+│   ├── index.ts                # Server entry point (stdio transport)
+│   ├── types.ts                # Tool constants + Zod schemas
+│   ├── tools/
+│   │   ├── definitions.ts      # MCP tool definitions
+│   │   └── handlers.ts         # Claude API handlers
+│   └── utils/
+│       └── api.ts              # Anthropic SDK wrapper
+├── skills/                     # Reusable skill templates
+│   ├── claude-code-review/SKILL.md
+│   └── claude-code-chat/SKILL.md
+├── commands/                   # Slash commands for Codex
+│   ├── claude-review.md
+│   └── claude-chat.md
+├── prompts/                    # Prompt templates
+│   └── code-review.md
+├── .claude-plugin/
+│   └── plugin.json             # Plugin manifest
+├── Dockerfile                  # Multi-stage Docker build
+├── test-mcp-client.mjs         # Test client
+└── README.md
+```
+
 ## Prerequisites
 
 - Node.js 18+
