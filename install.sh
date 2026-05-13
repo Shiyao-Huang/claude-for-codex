@@ -99,7 +99,7 @@ if [ -d "$INSTALL_DIR/.git" ]; then
   cd "$INSTALL_DIR"
   git stash --quiet 2>/dev/null || true
   git checkout -- . 2>/dev/null || true
-  git pull --ff-only || warn "Git pull failed, continuing with existing code."
+  git fetch origin && git reset --hard origin/main || warn "Git update failed, continuing with existing code."
 else
   info "Cloning claude-for-codex to $INSTALL_DIR..."
   git clone --depth 1 "$REPO" "$INSTALL_DIR"
