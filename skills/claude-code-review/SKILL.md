@@ -1,68 +1,56 @@
 ---
 name: claude-code-review
-description: Use Claude Code to perform expert code review on code, diffs, or uncommitted changes
+description: Invoke Claude Code for expert code review. Use when Codex needs a second opinion on code quality, security, or architecture.
 user-invocable: true
 ---
 
 # Claude Code Review
 
-Use this skill when the user asks for a code review, wants feedback on their code, or says "review this".
+Use this skill when you need Claude Code to review code that Codex has written or is analyzing.
 
-## How to Use
+## When to use
+- After Codex generates or modifies code, run claude-code-review for a second opinion
+- When you need security, performance, or architecture review
+- Before committing large changes
 
-Call the `claude-code-review` MCP tool with the appropriate parameters:
+## How to invoke
 
-### Review uncommitted changes
+Call the `claude-code-review` MCP tool with the code or diff to review.
 
-When the user asks to review their current work:
+### Review generated code
+```
+claude-code-review({
+  code: "<the source code>",
+  filename: "src/auth.ts",
+  language: "typescript",
+  focus: "security, correctness"
+})
+```
 
-1. Get the diff: `git diff` (unstaged) and `git diff --cached` (staged)
-2. Combine both into the `diff` parameter
-3. Set `focus` if the user mentioned specific concerns
+### Review a diff
+```
+claude-code-review({
+  diff: "<unified diff output>",
+  filename: "src/api.ts",
+  focus: "breaking changes, test coverage"
+})
+```
 
-### Review a specific file
+### Focus areas
+- `security` — Vulnerabilities, injection risks, auth issues
+- `performance` — Bottlenecks, memory leaks, N+1 queries
+- `correctness` — Logic errors, edge cases, null handling
+- `readability` — Naming, structure, documentation
+- `architecture` — Coupling, cohesion, design patterns
 
-When the user points to a file:
+## Output structure
+Claude Code returns:
+1. **Summary** — What the code does
+2. **Issues** — Problems found (bugs, security, performance)
+3. **Suggestions** — Improvement recommendations
+4. **Verdict** — approve / request changes / needs discussion
 
-1. Read the file content
-2. Pass it as the `code` parameter
-3. Set `filename` and `language` for context
-
-### Review a PR or branch diff
-
-When the user asks to review changes against a branch:
-
-1. Get the diff: `git diff main...HEAD` (or the specified base)
-2. Pass the output as the `diff` parameter
-
-## Parameters
-
-| Parameter  | When to use                                          |
-|------------|------------------------------------------------------|
-| `code`     | Reviewing a complete file or snippet                 |
-| `diff`     | Reviewing changes (git diff, uncommitted, PR diff)   |
-| `filename` | Always set when reviewing a specific file            |
-| `language` | Set when language affects review (e.g., TypeScript)  |
-| `focus`    | Set when user mentions specific concerns             |
-| `model`    | Override default model (rarely needed)               |
-
-## Output Handling
-
-- Present the review findings in order: Issues > Suggestions > Positive Notes > Verdict
-- Preserve severity levels and line references from the review
-- Do NOT auto-fix issues found in the review — always ask the user first
-- If the review is clean, say so explicitly
-
-## Focus Area Examples
-
-- `security` — Focus on vulnerabilities, injection, auth issues
-- `performance` — Focus on bottlenecks, memory leaks, N+1 queries
-- `readability` — Focus on naming, structure, documentation
-- `correctness` — Focus on logic errors, edge cases, error handling
-- `security, performance` — Combine multiple focus areas
-
-## Important
-
-- At least one of `code` or `diff` is required
-- The review is read-only — never apply fixes automatically
-- For large diffs, the tool handles them; no need to chunk manually
+## Rules
+- Do not auto-fix review findings. Present them to the user and ask which to address.
+- If the review tool returns an error, report it and stop. Do not improvise a review yourself.
+- Always include `filename` and `language` when available for better context.

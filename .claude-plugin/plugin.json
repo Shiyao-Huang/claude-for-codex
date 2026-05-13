@@ -1,0 +1,5 @@
+{
+  "name": "claude-for-codex",
+  "description": "Use Claude Code from Codex for code review and chat",
+  "version": "1.0.0"
+}

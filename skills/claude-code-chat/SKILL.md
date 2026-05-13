@@ -1,55 +1,33 @@
 ---
 name: claude-code-chat
-description: Use Claude Code for general questions, explanations, and AI assistance
+description: General-purpose Claude Code chat. Use for questions, explanations, analysis, or tasks that benefit from Claude's perspective.
 user-invocable: true
 ---
 
 # Claude Code Chat
 
-Use this skill when the user needs a second opinion, wants an explanation, or asks a question that benefits from Claude Code's perspective.
+Use this skill to ask Claude Code a question or get an explanation.
 
-## How to Use
+## When to use
+- When Codex needs Claude's analysis on a design decision
+- To get explanations of complex code or algorithms
+- For research questions about best practices or patterns
+- When you need a different perspective on a problem
 
-Call the `claude-code-chat` MCP tool:
+## How to invoke
 
-### General questions
+```
+claude-code-chat({
+  message: "What are the tradeoffs between event-driven and polling architectures?",
+  systemPrompt: "You are a senior architect. Focus on scalability and maintainability."
+})
+```
 
-When the user asks a coding question:
+## Tips
+- Be specific in your message for better responses
+- Use `systemPrompt` to set the role or context (e.g., "security expert", "performance engineer")
+- For code-related questions, include the relevant code snippet in the message
 
-1. Formulate the question clearly in the `message` parameter
-2. Optionally set `systemPrompt` to give context (e.g., "You are answering questions about a TypeScript/Node.js project")
-
-### Architecture advice
-
-When the user wants design advice:
-
-1. Include relevant context in the message (current architecture, constraints)
-2. Set `systemPrompt` to "You are a senior software architect"
-
-### Code explanation
-
-When the user wants code explained:
-
-1. Include the code snippet in the message
-2. Ask for the explanation format (high-level overview, line-by-line, etc.)
-
-## Parameters
-
-| Parameter      | When to use                                    |
-|----------------|------------------------------------------------|
-| `message`      | Always required — the question or request      |
-| `systemPrompt` | Set to give Claude Code a specific role/context |
-| `model`        | Override default model (rarely needed)         |
-
-## System Prompt Examples
-
-- `"You are a senior security engineer"` — For security-related questions
-- `"You are a TypeScript expert"` — For TS-specific questions
-- `"You are a performance optimization specialist"` — For performance questions
-- `"Reply in Chinese"` — For non-English responses
-
-## Important
-
-- The `message` parameter is required
-- Keep messages focused — one topic per call
-- For follow-up questions, include relevant context from previous exchanges
+## Rules
+- Do not use claude-code-chat as a substitute for writing code yourself. Use it for analysis, review, and advice.
+- Do not forward Codex's own tool output to Claude and ask it to redo the work.
