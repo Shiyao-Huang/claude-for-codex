@@ -141,25 +141,13 @@ else
 fi
 ok "MCP server registered as 'claude-code' in $CONFIG_FILE"
 
-# Step 6: Environment variables
+# Step 6: Done
 echo ""
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}  claude-for-codex installed successfully!${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "Set your API key before using:"
-echo ""
-echo "  # Standard Anthropic API:"
-echo "  export ANTHROPIC_API_KEY=\"your-key-here\""
-echo ""
-echo "  # Or custom endpoint (e.g., Zhipu):"
-echo "  export ANTHROPIC_AUTH_TOKEN=\"your-token\""
-echo "  export ANTHROPIC_BASE_URL=\"https://open.bigmodel.cn/api/anthropic\""
-echo "  export ANTHROPIC_MODEL=\"glm-5.1\""
-echo ""
-echo "Add these to ~/.zshrc or ~/.bashrc for persistence."
-echo ""
-echo "Then restart Codex. Available tools:"
+echo "Restart Codex to start using. Available tools:"
 echo "  - claude-code-review  (code review via Claude Code)"
 echo "  - claude-code-chat    (general Claude Code chat)"
 echo ""
@@ -168,5 +156,11 @@ for skill_dir in skills/*/; do
   skill_name=$(basename "$skill_dir")
   echo "  - $skill_name"
 done
+echo ""
+echo "Authentication: Codex will pass its existing ANTHROPIC_AUTH_TOKEN"
+echo "to the MCP server automatically. No manual configuration needed."
+echo ""
+echo "To uninstall:"
+echo "  curl -sfL https://raw.githubusercontent.com/Shiyao-Huang/claude-for-codex/main/install.sh | bash -s -- --uninstall"
 echo ""
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
