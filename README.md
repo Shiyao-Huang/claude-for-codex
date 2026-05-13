@@ -147,6 +147,28 @@ Send a message to Claude Code and get a response.
 > Use claude-chat to ask "What are the best practices for JWT token rotation?"
 ```
 
+## Skills
+
+This project includes reusable skills that guide Codex on how to effectively use the MCP tools.
+
+### claude-code-review skill
+
+Guides Codex on when and how to invoke the review tool. Covers:
+- Reviewing uncommitted changes (`git diff`)
+- Reviewing specific files with language context
+- Reviewing PR/branch diffs
+- Focus areas (security, performance, readability, correctness)
+
+### claude-code-chat skill
+
+Guides Codex on using the chat tool for:
+- General coding questions
+- Architecture advice
+- Code explanations
+- Custom system prompts for specialized roles
+
+Skills are located in `skills/` directory as `SKILL.md` files, following the same format as the official [codex-plugin-cc](https://github.com/openai/codex-plugin-cc) plugin.
+
 ## Use Cases
 
 1. **Post-write review** — After Codex generates code, ask Claude Code to review it for bugs and security issues
