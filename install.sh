@@ -6,11 +6,39 @@
 set -euo pipefail
 
 REPO="https://github.com/Shiyao-Huang/claude-for-codex.git"
-INSTALL_DIR="${CODEX_CLAUDE_DIR:-$HOME/.codex/claude-for-codex}"
-SKILLS_DIR="$HOME/.codex/skills"
-CONFIG_FILE="$HOME/.codex/config.toml"
 
-# Colors
+# Auto-detect Codex home directory
+detect_codex_home() {
+  # 1. Explicit env var
+  if [ -n "${CODEX_HOME:-}" ]; then
+    echo "$CODEX_HOME"
+    return
+  fi
+  # 2. Find codex binary and infer config dir
+  local codex_bin
+  codex_bin=$(command -v codex 2>/dev/null || true)
+  if [ -n "$codex_bin" ]; then
+    # Check common locations relative to binary
+    local codex_dir
+    codex_dir="$(dirname "$(dirname "$codex_bin")")/.codex"
+    if [ -d "$codex_dir" ]; then
+      echo "$codex_dir"
+      return
+    fi
+  fi
+  # 3. Check XDG config
+  if [ -d "${XDG_CONFIG_HOME:-$HOME/.config}/codex" ]; then
+    echo "${XDG_CONFIG_HOME:-$HOME/.config}/codex"
+    return
+  fi
+  # 4. Default
+  echo "$HOME/.codex"
+}
+
+CODEX_HOME=$(detect_codex_home)
+INSTALL_DIR="${CODEX_CLAUDE_DIR:-$CODEX_HOME/claude-for-codex}"
+SKILLS_DIR="$CODEX_HOME/skills"
+CONFIG_FILE="$CODEX_HOME/config.toml"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -56,6 +84,7 @@ if [ "${1:-}" = "--uninstall" ]; then
 fi
 
 # Step 1: Check Node.js
+info "Codex home detected: $CODEX_HOME"
 info "Checking prerequisites..."
 command -v node >/dev/null 2>&1 || error "Node.js is required. Install from https://nodejs.org"
 command -v npm >/dev/null 2>&1 || error "npm is required."
