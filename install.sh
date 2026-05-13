@@ -122,10 +122,22 @@ for skill_dir in skills/*/; do
   ok "Skill installed: $skill_name"
 done
 
-# Step 5: Register MCP server in Codex config
+# Step 5: Clean up old MCP entries and register new one
 info "Registering MCP server in Codex config..."
 mkdir -p "$(dirname "$CONFIG_FILE")"
 touch "$CONFIG_FILE"
+
+# Remove old [mcp_servers.claude] entry if it points to our install dir
+if grep -q '\[mcp_servers\.claude\]' "$CONFIG_FILE" 2>/dev/null; then
+  if grep -A2 '\[mcp_servers\.claude\]' "$CONFIG_FILE" | grep -q "claude-for-codex" 2>/dev/null; then
+    info "Removing old [mcp_servers.claude] entry..."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      sed -i '' '/\[mcp_servers\.claude\]/{N;N;d;}' "$CONFIG_FILE" 2>/dev/null || true
+    else
+      sed -i '/\[mcp_servers\.claude\]/{N;N;d;}' "$CONFIG_FILE" 2>/dev/null || true
+    fi
+  fi
+fi
 
 # Check if already registered
 if grep -q '\[mcp_servers.claude-code\]' "$CONFIG_FILE" 2>/dev/null; then
