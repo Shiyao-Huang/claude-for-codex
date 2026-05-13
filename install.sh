@@ -10,36 +10,6 @@ INSTALL_DIR="${CODEX_CLAUDE_DIR:-$HOME/.codex/claude-for-codex}"
 SKILLS_DIR="$HOME/.codex/skills"
 CONFIG_FILE="$HOME/.codex/config.toml"
 
-# Handle --uninstall
-if [ "${1:-}" = "--uninstall" ]; then
-  echo -e "${BLUE}Uninstalling claude-for-codex...${NC}"
-
-  # Remove skills
-  for skill in claude-code-review claude-code-chat claude-code-prompting; do
-    if [ -d "$SKILLS_DIR/$skill" ]; then
-      rm -rf "$SKILLS_DIR/$skill"
-      echo -e "${GREEN}[OK]${NC} Removed skill: $skill"
-    fi
-  done
-
-  # Remove MCP config entry
-  if [ -f "$CONFIG_FILE" ] && grep -q '\[mcp_servers.claude-code\]' "$CONFIG_FILE"; then
-    sed -i.bak '/# claude-for-codex MCP server/d;/\[mcp_servers\.claude-code\]/d;/command = "node"/{ /claude-for-codex/d; }' "$CONFIG_FILE" 2>/dev/null || true
-    rm -f "$CONFIG_FILE.bak"
-    echo -e "${GREEN}[OK]${NC} Removed MCP server from $CONFIG_FILE"
-  fi
-
-  # Remove install directory
-  if [ -d "$INSTALL_DIR" ]; then
-    rm -rf "$INSTALL_DIR"
-    echo -e "${GREEN}[OK]${NC} Removed $INSTALL_DIR"
-  fi
-
-  echo ""
-  echo -e "${GREEN}claude-for-codex uninstalled.${NC}"
-  exit 0
-fi
-
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -51,6 +21,39 @@ info()  { echo -e "${BLUE}[INFO]${NC} $*"; }
 ok()    { echo -e "${GREEN}[OK]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 error() { echo -e "${RED}[ERROR]${NC} $*"; exit 1; }
+
+# Handle --uninstall
+if [ "${1:-}" = "--uninstall" ]; then
+  echo -e "${BLUE}Uninstalling claude-for-codex...${NC}"
+
+  # Remove skills
+  for skill in claude-code-review claude-code-chat claude-code-prompting; do
+    if [ -d "$SKILLS_DIR/$skill" ]; then
+      rm -rf "$SKILLS_DIR/$skill"
+      ok "Removed skill: $skill"
+    fi
+  done
+
+  # Remove MCP config entry (multi-platform sed)
+  if [ -f "$CONFIG_FILE" ] && grep -q '\[mcp_servers.claude-code\]' "$CONFIG_FILE"; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      sed -i '' '/# claude-for-codex MCP server/d;/\[mcp_servers\.claude-code\]/{N;N;N;d;}' "$CONFIG_FILE" 2>/dev/null || true
+    else
+      sed -i '/# claude-for-codex MCP server/d;/\[mcp_servers\.claude-code\]/{N;N;N;d;}' "$CONFIG_FILE" 2>/dev/null || true
+    fi
+    ok "Removed MCP server from $CONFIG_FILE"
+  fi
+
+  # Remove install directory
+  if [ -d "$INSTALL_DIR" ]; then
+    rm -rf "$INSTALL_DIR"
+    ok "Removed $INSTALL_DIR"
+  fi
+
+  echo ""
+  ok "claude-for-codex uninstalled."
+  exit 0
+fi
 
 # Step 1: Check Node.js
 info "Checking prerequisites..."
